@@ -1,0 +1,220 @@
+# ⚡ Click Speed Test Pro
+
+A professional, feature-rich web application to test and measure your clicking speed and keyboard input performance. Track your CPS (Clicks Per Second), compare with averages, and break your personal records!
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+
+## 🎯 Features
+
+### Core Functionality
+- **Multiple Input Types**: Track left clicks, right clicks, and keyboard presses separately
+- **Real-time CPS Display**: See your clicks per second updated live
+- **Timed Modes**: Choose from Free Mode, 5s, 10s, or 30s timed challenges
+- **Smart Input Switching**: Keys auto-reset when switching; clicks continue seamlessly
+
+### Performance Tracking
+- 📊 **Personal Records**: Automatically saves your best CPS and test scores
+- 📈 **Live Performance Graph**: Visualize your clicking speed over time
+- 🏆 **Performance Comparison**: See how you stack up against average human performance (6.5 CPS)
+- 📝 **Detailed History**: View your last 50 inputs with timestamps and intervals
+
+### User Experience
+- ⏱️ **Countdown Timer**: Professional "3, 2, 1, GO!" countdown before timed tests
+- 🎨 **Visual Feedback**: Smooth animations and click effects
+- 🔊 **Optional Sound Effects**: Toggle click sounds on/off
+- 🌓 **Dark/Light Mode**: Switch themes for comfortable viewing
+- 📱 **Fully Responsive**: Works perfectly on desktop, tablet, and mobile
+
+### Advanced Features
+- ⚠️ **Macro Detection**: Alerts if suspiciously consistent patterns are detected
+- 🚫 **Debounce Filter**: Automatically filters accidental double-clicks (< 10ms)
+- 📤 **Export to CSV**: Download all your statistics for analysis
+- 🔗 **Share Results**: Generate shareable links with your performance data
+- 💾 **Auto-Save Records**: Your best scores persist across sessions
+
+## 🚀 Quick Start
+
+### Option 1: Direct Use
+1. Download the `index.html` file
+2. Open it in any modern web browser
+3. Start clicking or pressing keys!
+
+### Option 2: Local Server
+```bash
+# Using Python 3
+python -m http.server 8000
+
+# Using Node.js
+npx http-server
+
+# Then open http://localhost:8000
+```
+
+## 📖 How to Use
+
+### Getting Started
+1. **Select a Mode**: Choose between Free Mode or timed challenges (5s, 10s, 30s)
+2. **Click or Press**: Click anywhere in the test area or press any key
+3. **Watch Your Stats**: Monitor your CPS, timing, and performance in real-time
+
+### Understanding the Modes
+
+#### Free Mode
+- No time limit
+- Perfect for practice and warming up
+- CPS calculated from when you start
+- Switch between inputs freely
+
+#### Timed Modes (5s, 10s, 30s)
+- Countdown before starting
+- Fixed duration test
+- Records are saved automatically
+- Compare with your personal bests
+
+### Input Types
+
+**Left Click** 🟢
+- Primary mouse button
+- Continues test when active
+- Green indicator in history
+
+**Right Click** 🔴
+- Secondary mouse button
+- Context menu disabled during test
+- Red indicator in history
+
+**Keyboard Keys** 🔵
+- Any keyboard key
+- Automatically resets when switching keys
+- Blue indicator in history
+
+## 📊 Statistics Explained
+
+### CPS (Clicks Per Second)
+Your clicking speed calculated in real-time. Average human CPS is around 6.5.
+
+### Time Between Inputs
+Measured in milliseconds (ms). Lower is faster!
+
+### Comparison Badge
+- **Above Average**: 20%+ faster than 6.5 CPS
+- **Average**: Within 20% of 6.5 CPS
+- **Below Average**: 20%+ slower than 6.5 CPS
+
+### Macro Warning ⚠️
+Appears if the system detects suspiciously consistent timing (standard deviation < 5ms), which may indicate auto-clicker usage.
+
+## 🎮 Tips for Better Performance
+
+1. **Warm Up First**: Use Free Mode to practice before timed tests
+2. **Find Your Rhythm**: Some people click faster with different techniques
+3. **Relax Your Hand**: Tension slows you down
+4. **Try Different Fingers**: Two-finger clicking can be faster
+5. **Practice Regularly**: Like any skill, consistency improves performance
+
+## 🛠️ Technical Details
+
+### Browser Compatibility
+- ✅ Chrome/Edge (recommended)
+- ✅ Firefox
+- ✅ Safari
+- ✅ Opera
+- ✅ Any modern browser with ES6 support
+
+### Technologies Used
+- Pure HTML5
+- CSS3 with animations and gradients
+- Vanilla JavaScript (ES6+)
+- Canvas API for performance graphs
+- Web Audio API for sound effects
+- LocalStorage API for data persistence
+
+### Performance
+- Lightweight: Single HTML file (~50KB)
+- No external dependencies
+- No internet connection required
+- Smooth 60 FPS animations
+- Efficient DOM updates
+
+## 🔧 Customization
+
+You can easily customize the app by modifying these constants in the JavaScript:
+
+```javascript
+const MAX_HISTORY = 50;        // Number of inputs to store
+const DEBOUNCE_TIME = 10;      // Minimum ms between clicks
+const AVERAGE_CPS = 6.5;       // Comparison baseline
+const MACRO_THRESHOLD = 5;     // Clicks to check for macros
+```
+
+### Color Themes
+Modify the CSS gradient in the `body` selector:
+
+```css
+/* Dark theme */
+background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+
+/* Light theme */
+background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+```
+
+## 📁 Project Structure
+
+```
+click-speed-test-pro/
+│
+├── index.html          # Complete application (single file)
+├── README.md          # This file
+└── LICENSE            # MIT License
+```
+
+## 🐛 Known Limitations
+
+- History limited to last 50 inputs (performance optimization)
+- Audio may require user interaction first (browser policy)
+- Shared links expire when query parameters are cleared
+- LocalStorage limited to ~5MB (sufficient for records)
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs
+- Suggest new features
+- Submit pull requests
+- Improve documentation
+
+## 📝 Version History
+
+### v1.0.0 (2024)
+- Initial release
+- All core features implemented
+- Full responsive design
+- Dark/Light mode support
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Inspired by various online click speed tests
+- Average CPS data from user performance studies
+- Icons: Unicode emoji characters
+
+## 📧 Contact & Support
+
+- Open an issue for bug reports
+- Star the project if you find it useful!
+- Share your high scores with friends
+
+---
+
+**Made with ❤️ for gamers, developers, and anyone who wants to test their speed!**
+
+🎯 **Challenge yourself**: Can you beat 10 CPS? How about 15?
+
+⚡ **Pro tip**: The world record for click speed is over 20 CPS. Good luck!

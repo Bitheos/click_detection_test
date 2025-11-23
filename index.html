@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key & Click Speed Test Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            transition: background 0.3s ease;
+        }
+        
+        body.light-mode {
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            color: #1a1a1a;
+        }
+        
+        body.light-mode .container {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a1a1a;
+        }
+        
+        body.light-mode .test-area,
+        body.light-mode .stat-box,
+        body.light-mode table {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        
+        body.light-mode th {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .theme-toggle, .sound-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover, .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+        
+        .description {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        .timer-modes {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .timer-mode-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid transparent;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.light-mode .timer-mode-btn {
+            color: #1a1a1a;
+        }
+        
+        .timer-mode-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .timer-mode-btn.active {
+            background: #fdbb2d;
+            color: #1a2a6c;
+            border-color: #fdbb2d;
+        }
+        
+        .timer-mode-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .countdown-overlay.active {
+            display: flex;
+        }
+        
+        .countdown-number {
+            font-size: 15rem;
+            font-weight: bold;
+            color: #fdbb2d;
+            text-shadow: 0 0 50px rgba(253, 187, 45, 0.8);
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fdbb2d;
+            margin: 0.5rem 0;
+            text-shadow: 0 0 10px rgba(253, 187, 45, 0.5);
+        }
+        
+        .cps-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 0.5rem 0;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+        
+        .records-section {
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .record-item {
+            font-size: 1.1rem;
+            margin: 0.3rem 0;
+        }
+        
+        .comparison-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .comparison-above {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+        
+        .comparison-below {
+            background: rgba(244, 67, 54, 0.3);
+            color: #F44336;
+        }
+        
+        .comparison-average {
+            background: rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+        
+        .macro-warning {
+            background: rgba(244, 67, 54, 0.3);
+            color: #F44336;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .macro-warning.active {
+            display: block;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            height: 320px;
+        }
+        
+        canvas {
+            max-width: 100%;
+        }
+        
+        .test-area {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .test-area.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .test-area.click-effect {
+            animation: clickPulse 0.2s ease-out;
+        }
+        
+        @keyframes clickPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); box-shadow: 0 0 30px rgba(253, 187, 45, 0.5); }
+            100% { transform: scale(1); }
+        }
+        
+        .click-instructions {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .click-count {
+            font-size: 1.3rem;
+            margin: 0.5rem 0;
+            color: #fdbb2d;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem;
+            min-width: 150px;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            color: #fdbb2d;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #fdbb2d;
+            color: #1a2a6c;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover {
+            background: #ffcc44;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .share-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .share-link {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+        
+        .click-history {
+            margin-top: 2rem;
+            width: 100%;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 0.8rem;
+            text-align: center;
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .input-type-left {
+            color: #4CAF50;
+        }
+        
+        .input-type-right {
+            color: #F44336;
+        }
+        
+        .input-type-key {
+            color: #2196F3;
+        }
+        
+        .status-indicator {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            display: inline-block;
+        }
+        
+        .status-waiting {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+        
+        .history-info {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        
+        .key-display {
+            font-size: 3rem;
+            margin: 0.5rem 0;
+            min-height: 60px;
+            color: #fdbb2d;
+            text-shadow: 0 0 10px rgba(253, 187, 45, 0.5);
+        }
+        
+        .mode-info {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #ffcc44;
+            font-style: italic;
+        }
+        
+        .current-input {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+            }
+            
+            .stat-box {
+                min-width: 100%;
+            }
+            
+            .key-display {
+                font-size: 2rem;
+            }
+            
+            .countdown-number {
+                font-size: 10rem;
+            }
+            
+            .timer-display {
+                font-size: 2rem;
+            }
+            
+            .cps-display {
+                font-size: 1.5rem;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="countdown-overlay" id="countdownOverlay">
+        <div class="countdown-number" id="countdownNumber">3</div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Click Speed Test Pro</h1>
+            <div>
+                <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌓</button>
+                <button class="sound-toggle" id="soundToggle" title="Toggle sound">🔊</button>
+            </div>
+        </div>
+        
+        <p class="description">
+            Click or press any key to test your speed!<br>
+            <strong>Keys auto-reset</strong> when switching • <strong>Clicks continue</strong> the current test
+        </p>
+        
+        <div class="timer-modes">
+            <button class="timer-mode-btn active" data-duration="0">Free Mode</button>
+            <button class="timer-mode-btn" data-duration="5">5 Seconds</button>
+            <button class="timer-mode-btn" data-duration="10">10 Seconds</button>
+            <button class="timer-mode-btn" data-duration="30">30 Seconds</button>
+        </div>
+        
+        <div class="records-section">
+            <h3>🏆 Personal Records</h3>
+            <div class="record-item">Best CPS: <strong><span id="bestCPS">0.00</span></strong></div>
+            <div class="record-item">5s Test: <span id="bestTime5">N/A</span></div>
+            <div class="record-item">10s Test: <span id="bestTime10">N/A</span></div>
+            <div class="record-item">30s Test: <span id="bestTime30">N/A</span></div>
+        </div>
+        
+        <div class="test-area" id="testArea" tabindex="0">
+            <p class="click-instructions">Click here or press any key to start</p>
+            <div class="timer-display" id="timerDisplay">Ready</div>
+            <div class="cps-display">CPS: <span id="cpsDisplay">0.00</span></div>
+            <div class="key-display" id="keyDisplay"></div>
+            <p class="click-count">Inputs: <span id="inputCount">0</span></p>
+            <div class="current-input" id="currentInputDisplay">Current: None</div>
+            <div class="status-indicator status-waiting" id="statusIndicator">Waiting for first input...</div>
+            <div class="mode-info">Keys reset when switching • Clicks continue</div>
+        </div>
+        
+        <div class="macro-warning" id="macroWarning">
+            ⚠️ Suspicious pattern detected! Consistent timing suggests possible auto-clicker usage.
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-box">
+                <p>Current Input</p>
+                <div class="stat-value" id="currentInput">-</div>
+                <p>Press Count</p>
+                <div class="stat-value" id="currentCount">0</div>
+                <div class="comparison-badge" id="comparisonBadge"></div>
+            </div>
+            
+            <div class="stat-box">
+                <p>Left Clicks</p>
+                <div class="stat-value" id="leftClickCount">0</div>
+                <p>Average Time</p>
+                <div class="stat-value" id="leftClickAvg">0 ms</div>
+            </div>
+            
+            <div class="stat-box">
+                <p>Right Clicks</p>
+                <div class="stat-value" id="rightClickCount">0</div>
+                <p>Average Time</p>
+                <div class="stat-value" id="rightClickAvg">0 ms</div>
+            </div>
+            
+            <div class="stat-box">
+                <p>Key Presses</p>
+                <div class="stat-value" id="keyPressCount">0</div>
+                <p>Average Time</p>
+                <div class="stat-value" id="keyPressAvg">0 ms</div>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button id="resetBtn">🔄 Reset All</button>
+            <button id="exportBtn">📊 Export CSV</button>
+            <button id="shareBtn">🔗 Share Results</button>
+        </div>
+        
+        <div class="share-section" id="shareSection" style="display: none;">
+            <h3>📤 Share Your Results</h3>
+            <p>Copy this link to share:</p>
+            <div class="share-link" id="shareLink"></div>
+            <button onclick="navigator.clipboard.writeText(document.getElementById('shareLink').textContent); alert('Link copied!')">📋 Copy Link</button>
+        </div>
+        
+        <div class="chart-container">
+            <h3>📈 Performance Over Time</h3>
+            <canvas id="performanceChart"></canvas>
+        </div>
+        
+        <div class="click-history">
+            <h2>📝 Input History (Last 50 Inputs)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Input Type</th>
+                        <th>Key/Button</th>
+                        <th>Time (ms)</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody id="inputHistory">
+                </tbody>
+            </table>
+            <p class="history-info" id="historyInfo">Showing 0 inputs</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const testArea = document.getElementById('testArea');
+            const resetBtn = document.getElementById('resetBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const shareBtn = document.getElementById('shareBtn');
+            const inputCount = document.getElementById('inputCount');
+            const leftClickCount = document.getElementById('leftClickCount');
+            const rightClickCount = document.getElementById('rightClickCount');
+            const keyPressCount = document.getElementById('keyPressCount');
+            const currentCount = document.getElementById('currentCount');
+            const leftClickAvg = document.getElementById('leftClickAvg');
+            const rightClickAvg = document.getElementById('rightClickAvg');
+            const keyPressAvg = document.getElementById('keyPressAvg');
+            const inputHistory = document.getElementById('inputHistory');
+            const statusIndicator = document.getElementById('statusIndicator');
+            const historyInfo = document.getElementById('historyInfo');
+            const keyDisplay = document.getElementById('keyDisplay');
+            const currentInputDisplay = document.getElementById('currentInputDisplay');
+            const currentInputElement = document.getElementById('currentInput');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const cpsDisplay = document.getElementById('cpsDisplay');
+            const bestCPS = document.getElementById('bestCPS');
+            const bestTime5 = document.getElementById('bestTime5');
+            const bestTime10 = document.getElementById('bestTime10');
+            const bestTime30 = document.getElementById('bestTime30');
+            const comparisonBadge = document.getElementById('comparisonBadge');
+            const macroWarning = document.getElementById('macroWarning');
+            const countdownOverlay = document.getElementById('countdownOverlay');
+            const countdownNumber = document.getElementById('countdownNumber');
+            const themeToggle = document.getElementById('themeToggle');
+            const soundToggle = document.getElementById('soundToggle');
+            const shareSection = document.getElementById('shareSection');
+            const shareLink = document.getElementById('shareLink');
+            const timerModeButtons = document.querySelectorAll('.timer-mode-btn');
+            
+            // Test state
+            let testActive = false;
+            let inputTimes = [];
+            let currentInput = null;
+            let currentInputType = null;
+            let currentInputCount = 0;
+            let leftClicks = 0;
+            let rightClicks = 0;
+            let keyPresses = 0;
+            let totalInputs = 0;
+            let lastInputTime = null;
+            let inputNumber = 0;
+            let timerDuration = 0;
+            let timerRemaining = 0;
+            let timerInterval = null;
+            let testStartTime = null;
+            let currentCPS = 0;
+            let soundEnabled = true;
+            let chartData = [];
+            let performanceChart = null;
+            
+            // Records
+            let records = {
+                bestCPS: 0,
+                best5s: 0,
+                best10s: 0,
+                best30s: 0
+            };
+            
+            // Load records from localStorage
+            try {
+                const savedRecords = localStorage.getItem('clickTestRecords');
+                if (savedRecords) {
+                    records = JSON.parse(savedRecords);
+                    updateRecordsDisplay();
+                }
+            } catch (e) {
+                console.error('Error loading records:', e);
+            }
+            
+            // Constants
+            const MAX_HISTORY = 50;
+            const DEBOUNCE_TIME = 10;
+            const AVERAGE_CPS = 6.5;
+            const MACRO_THRESHOLD = 5;
+            
+            // Audio context for click sounds
+            let audioContext = null;
+            
+            function playClickSound() {
+                if (!soundEnabled) return;
+                
+                try {
+                    if (!audioContext) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                    
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                } catch (e) {
+                    console.error('Audio error:', e);
+                }
+            }
+            
+            // Initialize chart
+            function initChart() {
+                const canvas = document.getElementById('performanceChart');
+                const ctx = canvas.getContext('2d');
+                performanceChart = { canvas, ctx, data: [] };
+                drawChart();
+            }
+            
+            function drawChart() {
+                if (!performanceChart) return;
+                
+                const { canvas, ctx } = performanceChart;
+                const width = canvas.parentElement.clientWidth - 32;
+                const height = 250;
+                canvas.width = width;
+                canvas.height = height;
+                
+                ctx.clearRect(0, 0, width, height);
+                
+                if (chartData.length < 2) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.font = '16px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Start testing to see performance graph', width / 2, height / 2);
+                    return;
+                }
+                
+                const maxCPS = Math.max(...chartData.map(d => d.cps), 10);
+                const padding = 40;
+                const graphWidth = width - padding * 2;
+                const graphHeight = height - padding * 2;
+                
+                // Draw grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 5; i++) {
+                    const y = padding + (graphHeight / 5) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(padding, y);
+                    ctx.lineTo(width - padding, y);
+                    ctx.stroke();
+                }
+                
+                // Draw line
+                ctx.strokeStyle = '#fdbb2d';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                chartData.forEach((point, index) => {
+                    const x = padding + (graphWidth / (chartData.length - 1)) * index;
+                    const y = padding + graphHeight - (point.cps / maxCPS) * graphHeight;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                
+                ctx.stroke();
+                
+                // Draw points
+                ctx.fillStyle = '#fdbb2d';
+                chartData.forEach((point, index) => {
+                    const x = padding + (graphWidth / (chartData.length - 1)) * index;
+                    const y = padding + graphHeight - (point.cps / maxCPS) * graphHeight;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                // Draw labels
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'right';
+                for (let i = 0; i <= 5; i++) {
+                    const y = padding + (graphHeight / 5) * i;
+                    const value = (maxCPS * (5 - i) / 5).toFixed(1);
+                    ctx.fillText(value, padding - 10, y + 4);
+                }
+                
+                ctx.textAlign = 'center';
+                ctx.fillText('CPS', padding - 10, padding - 10);
+            }
+            
+            // Timer mode selection
+            timerModeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (testActive) return;
+                    
+                    timerModeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    timerDuration = parseInt(this.dataset.duration);
+                    
+                    if (timerDuration > 0) {
+                        timerDisplay.textContent = `${timerDuration}s`;
+                    } else {
+                        timerDisplay.textContent = 'Ready';
+                    }
+                });
+            });
+            
+            // Theme toggle
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light-mode');
+                drawChart();
+            });
+            
+            // Sound toggle
+            soundToggle.addEventListener('click', function() {
+                soundEnabled = !soundEnabled;
+                this.classList.toggle('muted');
+                this.textContent = soundEnabled ? '🔊' : '🔇';
+            });
+            
+            function startCountdown(callback) {
+                let count = 3;
+                countdownOverlay.classList.add('active');
+                countdownNumber.textContent = count;
+                
+                // Disable mode buttons during countdown
+                timerModeButtons.forEach(btn => btn.disabled = true);
+                
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        countdownNumber.textContent = count;
+                    } else {
+                        countdownNumber.textContent = 'GO!';
+                        setTimeout(() => {
+                            countdownOverlay.classList.remove('active');
+                            callback();
+                        }, 500);
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+            }
+            
+            function startTimer() {
+                if (timerDuration === 0) return;
+                
+                timerRemaining = timerDuration;
+                testStartTime = Date.now();
+                
+                timerInterval = setInterval(() => {
+                    const elapsed = (Date.now() - testStartTime) / 1000;
+                    timerRemaining = Math.max(0, timerDuration - elapsed);
+                    
+                    timerDisplay.textContent = timerRemaining.toFixed(2) + 's';
+                    
+                    if (elapsed > 0) {
+                        currentCPS = currentInputCount / elapsed;
+                        cpsDisplay.textContent = currentCPS.toFixed(2);
+                        
+                        if (Math.floor(elapsed * 2) > chartData.length) {
+                            chartData.push({ time: elapsed, cps: currentCPS });
+                            drawChart();
+                        }
+                    }
+                    
+                    if (timerRemaining <= 0) {
+                        endTimedTest();
+                    }
+                }, 50);
+            }
+            
+            function endTimedTest() {
+                clearInterval(timerInterval);
+                testActive = false;
+                testArea.classList.remove('active');
+                timerModeButtons.forEach(btn => btn.disabled = false);
+                
+                const finalCPS = currentCPS;
+                
+                let newRecord = false;
+                if (finalCPS > records.bestCPS) {
+                    records.bestCPS = finalCPS;
+                    newRecord = true;
+                }
+                
+                if (timerDuration === 5 && currentInputCount > records.best5s) {
+                    records.best5s = currentInputCount;
+                    newRecord = true;
+                }
+                
+                if (timerDuration === 10 && currentInputCount > records.best10s) {
+                    records.best10s = currentInputCount;
+                    newRecord = true;
+                }
+                
+                if (timerDuration === 30 && currentInputCount > records.best30s) {
+                    records.best30s = currentInputCount;
+                    newRecord = true;
+                }
+                
+                if (newRecord) {
+                    try {
+                        localStorage.setItem('clickTestRecords', JSON.stringify(records));
+                    } catch (e) {
+                        console.error('Error saving records:', e);
+                    }
+                    updateRecordsDisplay();
+                    statusIndicator.textContent = `🎉 NEW RECORD! CPS: ${finalCPS.toFixed(2)}`;
+                } else {
+                    statusIndicator.textContent = `Test Complete! CPS: ${finalCPS.toFixed(2)}`;
+                }
+                
+                statusIndicator.className = 'status-indicator status-waiting';
+                timerDisplay.textContent = 'Complete!';
+            }
+            
+            function updateRecordsDisplay() {
+                bestCPS.textContent = records.bestCPS.toFixed(2);
+                bestTime5.textContent = records.best5s > 0 ? `${records.best5s} clicks (${(records.best5s / 5).toFixed(2)} CPS)` : 'N/A';
+                bestTime10.textContent = records.best10s > 0 ? `${records.best10s} clicks (${(records.best10s / 10).toFixed(2)} CPS)` : 'N/A';
+                bestTime30.textContent = records.best30s > 0 ? `${records.best30s} clicks (${(records.best30s / 30).toFixed(2)} CPS)` : 'N/A';
+            }
+            
+            function updateComparison() {
+                if (currentCPS === 0) {
+                    comparisonBadge.textContent = '';
+                    return;
+                }
+                
+                const diff = ((currentCPS - AVERAGE_CPS) / AVERAGE_CPS) * 100;
+                
+                if (diff > 20) {
+                    comparisonBadge.textContent = `${diff.toFixed(0)}% above average`;
+                    comparisonBadge.className = 'comparison-badge comparison-above';
+                } else if (diff < -20) {
+                    comparisonBadge.textContent = `${Math.abs(diff).toFixed(0)}% below average`;
+                    comparisonBadge.className = 'comparison-badge comparison-below';
+                } else {
+                    comparisonBadge.textContent = 'Average speed';
+                    comparisonBadge.className = 'comparison-badge comparison-average';
+                }
+            }
+            
+            function detectMacro() {
+                if (inputTimes.length < MACRO_THRESHOLD) return;
+                
+                const recentTimes = inputTimes.slice(0, MACRO_THRESHOLD).map(i => i.time).filter(t => t > 0);
+                if (recentTimes.length < MACRO_THRESHOLD) return;
+                
+                const avg = recentTimes.reduce((a, b) => a + b) / recentTimes.length;
+                const variance = recentTimes.reduce((sum, time) => sum + Math.pow(time - avg, 2), 0) / recentTimes.length;
+                const stdDev = Math.sqrt(variance);
+                
+                if (stdDev < 5 && avg < 100) {
+                    macroWarning.classList.add('active');
+                } else {
+                    macroWarning.classList.remove('active');
+                }
+            }
+            
+            function initTestArea() {
+                testArea.setAttribute('tabindex', '0');
+                testArea.addEventListener('click', handleLeftClick);
+                testArea.addEventListener('contextmenu', handleRightClick);
+                testArea.addEventListener('keydown', handleKeyPress);
+                testArea.focus();
+            }
+            
+            function handleLeftClick(e) {
+                e.preventDefault();
+                
+                testArea.classList.add('click-effect');
+                setTimeout(() => testArea.classList.remove('click-effect'), 200);
+                
+                if (!testActive) {
+                    if (timerDuration > 0) {
+                        startCountdown(() => {
+                            startTest('left', 'Left Click');
+                            recordInput('left', 'Left Click');
+                            updateDisplay();
+                        });
+                        return;
+                    } else {
+                        startTest('left', 'Left Click');
+                    }
+                } else if (currentInputType !== 'left') {
+                    switchInput('left', 'Left Click');
+                }
+                
+                recordInput('left', 'Left Click');
+                updateDisplay();
+            }
+            
+            function handleRightClick(e) {
+                e.preventDefault();
+                
+                testArea.classList.add('click-effect');
+                setTimeout(() => testArea.classList.remove('click-effect'), 200);
+                
+                if (!testActive) {
+                    if (timerDuration > 0) {
+                        startCountdown(() => {
+                            startTest('right', 'Right Click');
+                            recordInput('right', 'Right Click');
+                            updateDisplay();
+                        });
+                        return;
+                    } else {
+                        startTest('right', 'Right Click');
+                    }
+                } else if (currentInputType !== 'right') {
+                    switchInput('right', 'Right Click');
+                }
+                
+                recordInput('right', 'Right Click');
+                updateDisplay();
+            }
+            
+            function handleKeyPress(e) {
+                e.preventDefault();
+                
+                let keyName = e.key;
+                if (keyName === ' ') {
+                    keyName = 'Space';
+                } else if (keyName === 'Escape') {
+                    keyName = 'Esc';
+                } else if (keyName.length > 1) {
+                    keyName = keyName.charAt(0).toUpperCase() + keyName.slice(1).toLowerCase();
+                }
+                
+                if (!testActive) {
+                    if (timerDuration > 0) {
+                        startCountdown(() => {
+                            startTest('key', keyName);
+                            recordInput('key', keyName);
+                            updateDisplay();
+                        });
+                        return;
+                    } else {
+                        startTest('key', keyName);
+                    }
+                } else if (currentInputType !== 'key' || currentInput !== keyName) {
+                    switchInput('key', keyName);
+                }
+                
+                recordInput('key', keyName);
+                updateDisplay();
+            }
+            
+            function switchInput(type, value) {
+                currentInputType = type;
+                currentInput = value;
+                currentInputCount = 0;
+                currentInputDisplay.textContent = `Current: ${value}`;
+                currentInputElement.textContent = value;
+                
+                if (timerDuration === 0) {
+                    chartData = [];
+                    testStartTime = Date.now();
+                }
+            }
+            
+            function startTest(type, value) {
+                testActive = true;
+                testArea.classList.add('active');
+                switchInput(type, value);
+                statusIndicator.textContent = `Testing: ${value}`;
+                statusIndicator.className = 'status-indicator status-active';
+                
+                if (timerDuration > 0) {
+                    startTimer();
+                } else {
+                    testStartTime = Date.now();
+                }
+                
+                testArea.focus();
+            }
+            
+            function recordInput(type, value) {
+                const now = Date.now();
+                const timeSinceLastInput = lastInputTime ? now - lastInputTime : 0;
+                
+                if (timeSinceLastInput > 0 && timeSinceLastInput < DEBOUNCE_TIME) {
+                    return;
+                }
+                
+                playClickSound();
+                
+                inputNumber++;
+                
+                const inputData = {
+                    number: inputNumber,
+                    type: type,
+                    value: value,
+                    time: timeSinceLastInput,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                
+                inputTimes.unshift(inputData);
+                
+                if (inputTimes.length > MAX_HISTORY) {
+                    inputTimes.pop();
+                }
+                
+                currentInputCount++;
+                totalInputs++;
+                
+                if (type === 'left') {
+                    leftClicks++;
+                } else if (type === 'right') {
+                    rightClicks++;
+                } else if (type === 'key') {
+                    keyPresses++;
+                }
+                
+                lastInputTime = now;
+                
+                if (type === 'key') {
+                    keyDisplay.textContent = value;
+                    setTimeout(() => {
+                        keyDisplay.textContent = '';
+                    }, 300);
+                }
+                
+                if (timerDuration === 0 && testStartTime) {
+                    const elapsed = (now - testStartTime) / 1000;
+                    if (elapsed > 0) {
+                        currentCPS = currentInputCount / elapsed;
+                        cpsDisplay.textContent = currentCPS.toFixed(2);
+                        
+                        if (Math.floor(elapsed * 2) > chartData.length) {
+                            chartData.push({ time: elapsed, cps: currentCPS });
+                            drawChart();
+                        }
+                    }
+                }
+                
+                updateHistoryTable();
+                detectMacro();
+            }
+            
+            function updateHistoryTable() {
+                inputHistory.innerHTML = '';
+                
+                inputTimes.forEach(input => {
+                    const row = document.createElement('tr');
+                    
+                    const indexCell = document.createElement('td');
+                    indexCell.textContent = input.number;
+                    
+                    const typeCell = document.createElement('td');
+                    let typeText = '';
+                    let typeClass = '';
+                    
+                    if (input.type === 'left') {
+                        typeText = 'Left Click';
+                        typeClass = 'input-type-left';
+                    } else if (input.type === 'right') {
+                        typeText = 'Right Click';
+                        typeClass = 'input-type-right';
+                    } else {
+                        typeText = 'Key Press';
+                        typeClass = 'input-type-key';
+                    }
+                    
+                    typeCell.textContent = typeText;
+                    typeCell.className = typeClass;
+                    
+                    const valueCell = document.createElement('td');
+                    valueCell.textContent = input.value;
+                    
+                    const timeCell = document.createElement('td');
+                    timeCell.textContent = `${input.time} ms`;
+                    
+                    const timestampCell = document.createElement('td');
+                    timestampCell.textContent = input.timestamp;
+                    
+                    row.appendChild(indexCell);
+                    row.appendChild(typeCell);
+                    row.appendChild(valueCell);
+                    row.appendChild(timeCell);
+                    row.appendChild(timestampCell);
+                    
+                    inputHistory.appendChild(row);
+                });
+                
+                const displayedCount = inputTimes.length;
+                historyInfo.textContent = `Showing last ${displayedCount} of ${totalInputs} total inputs`;
+            }
+            
+            function updateDisplay() {
+                inputCount.textContent = totalInputs.toLocaleString();
+                currentCount.textContent = currentInputCount.toLocaleString();
+                leftClickCount.textContent = leftClicks.toLocaleString();
+                rightClickCount.textContent = rightClicks.toLocaleString();
+                keyPressCount.textContent = keyPresses.toLocaleString();
+                
+                const leftTimes = inputTimes
+                    .filter(input => input.type === 'left')
+                    .map(i => i.time);
+
+                const rightTimes = inputTimes
+                    .filter(input => input.type === 'right')
+                    .map(i => i.time);
+
+                const keyTimes = inputTimes
+                    .filter(input => input.type === 'key' && input.value === currentInput)
+                    .map(input => input.time)
+                    .filter(t => t > 0);
+
+                const leftAvg = leftTimes.length > 0 ?
+                    Math.round(leftTimes.reduce((a, b) => a + b, 0) / leftTimes.length) : 0;
+
+                const rightAvg = rightTimes.length > 0 ?
+                    Math.round(rightTimes.reduce((a, b) => a + b, 0) / rightTimes.length) : 0;
+
+                const keyAvg = keyTimes.length > 0 ?
+                    Math.round(keyTimes.reduce((a, b) => a + b, 0) / keyTimes.length) : 0;
+
+                leftClickAvg.textContent = `${leftAvg} ms`;
+                rightClickAvg.textContent = `${rightAvg} ms`;
+                keyPressAvg.textContent = `${keyAvg} ms`;
+                
+                updateComparison();
+                
+                if (testActive) {
+                    statusIndicator.textContent = `Testing: ${currentInput}`;
+                    statusIndicator.className = 'status-indicator status-active';
+                }
+            }
+            
+            function resetTest() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                
+                testActive = false;
+                currentInput = null;
+                currentInputType = null;
+                currentInputCount = 0;
+                leftClicks = 0;
+                rightClicks = 0;
+                keyPresses = 0;
+                totalInputs = 0;
+                inputTimes = [];
+                lastInputTime = null;
+                inputNumber = 0;
+                currentCPS = 0;
+                chartData = [];
+                testStartTime = null;
+                
+                inputHistory.innerHTML = '';
+                keyDisplay.textContent = '';
+                currentInputDisplay.textContent = 'Current: None';
+                currentInputElement.textContent = '-';
+                cpsDisplay.textContent = '0.00';
+                statusIndicator.textContent = 'Waiting for first input...';
+                statusIndicator.className = 'status-indicator status-waiting';
+                historyInfo.textContent = 'Showing 0 inputs';
+                comparisonBadge.textContent = '';
+                macroWarning.classList.remove('active');
+                shareSection.style.display = 'none';
+                
+                timerModeButtons.forEach(btn => btn.disabled = false);
+                
+                if (timerDuration > 0) {
+                    timerDisplay.textContent = `${timerDuration}s`;
+                } else {
+                    timerDisplay.textContent = 'Ready';
+                }
+                
+                drawChart();
+                updateDisplay();
+                testArea.focus();
+            }
+            
+            exportBtn.addEventListener('click', function() {
+                if (inputTimes.length === 0) {
+                    alert('No data to export!');
+                    return;
+                }
+                
+                let csv = 'Number,Type,Value,Time (ms),Timestamp\n';
+                
+                inputTimes.slice().reverse().forEach(input => {
+                    const type = input.type === 'left' ? 'Left Click' : 
+                                input.type === 'right' ? 'Right Click' : 'Key Press';
+                    csv += `${input.number},"${type}","${input.value}",${input.time},"${input.timestamp}"\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `click-test-results-${Date.now()}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            });
+            
+            shareBtn.addEventListener('click', function() {
+                const shareData = {
+                    cps: currentCPS.toFixed(2),
+                    clicks: currentInputCount,
+                    duration: timerDuration || 'free',
+                    best: records.bestCPS.toFixed(2)
+                };
+                
+                const encoded = btoa(JSON.stringify(shareData));
+                const shareUrl = `${window.location.origin}${window.location.pathname}?results=${encoded}`;
+                
+                shareLink.textContent = shareUrl;
+                shareSection.style.display = 'block';
+            });
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedResults = urlParams.get('results');
+            if (sharedResults) {
+                try {
+                    const data = JSON.parse(atob(sharedResults));
+                    alert(`📊 Shared Results:\n\nCPS: ${data.cps}\nClicks: ${data.clicks}\nDuration: ${data.duration}\nBest CPS: ${data.best}`);
+                } catch (e) {
+                    console.error('Invalid shared results');
+                }
+            }
+            
+            resetBtn.addEventListener('click', resetTest);
+            
+            document.addEventListener('click', function() {
+                testArea.focus();
+            });
+            
+            initTestArea();
+            initChart();
+        });
+    </script>
+</body>
+</html>
