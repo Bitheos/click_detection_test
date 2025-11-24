@@ -1,4 +1,4 @@
-# ⚡ Click Speed Test Pro
+# ⚡ Click Detection Test
 
 A professional, feature-rich web application to test and measure your clicking speed and keyboard input performance. Track your CPS (Clicks Per Second), compare with averages, and break your personal records!
 
